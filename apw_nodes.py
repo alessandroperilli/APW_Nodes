@@ -1,5 +1,5 @@
 import torch
-from comfy.utils import common_upscale   # ← only needed if you keep the optional replacement logic
+from comfy.utils import common_upscale # needed for the replacement logic
 
 
 class ImageListFilter:
@@ -7,13 +7,10 @@ class ImageListFilter:
     Passes through or removes images from an IMAGE list according to a
     minimum width / height.  “0” means “no limit” for that dimension.
 
-    • width_min  – images whose width  ≤ width_min  are dropped
-    • height_min – images whose height ≤ height_min are dropped
+    • width_min: images whose width  ≤ width_min  are dropped
+    • height_min: images whose height ≤ height_min are dropped
 
-      (The +1 logic below makes the behaviour match your example:
-       entering 64 removes images < 65 px.)
-
-    Optional: a replacement_image can be supplied; if present an image
+    A replacement_image can be supplied; if present an image
     that would be dropped is instead replaced with that image.
     """
 
@@ -28,7 +25,7 @@ class ImageListFilter:
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "images": ("IMAGE",),          # list input from MakeImageList
+                "images": ("IMAGE",),
                 "width_min":  ("INT", {"default": 0, "min": 0}),
                 "height_min": ("INT", {"default": 0, "min": 0}),
             },
@@ -37,7 +34,6 @@ class ImageListFilter:
             },
         }
 
-    # ------------------------------------------------------------------
     def filter(self,
                images,
                width_min,
@@ -50,7 +46,7 @@ class ImageListFilter:
         if isinstance(replacement_image, list) and replacement_image:
             replacement_image = replacement_image[0]
 
-        # add 1 so “64” really means 65-px threshold as per your example
+        # add 1 to user input
         width_thr  = width_min  + 1 if width_min  else 0
         height_thr = height_min + 1 if height_min else 0
 
