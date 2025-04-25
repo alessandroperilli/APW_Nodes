@@ -1,0 +1,14 @@
+[project]
+name = "apw_nodes"
+description = ""
+version = "1.0.0"
+license = {file = "LICENSE"}
+
+[project.urls]
+Repository = "https://github.com/alessandroperilli/apw_nodes"
+#  Used by Comfy Registry https://comfyregistry.org
+
+[tool.comfy]
+PublisherId = "perilli"
+DisplayName = "apw_nodes"
+Icon = ""  
