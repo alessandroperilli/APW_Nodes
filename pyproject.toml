@@ -1,6 +1,6 @@
 [project]
 name = "apw_nodes"
-description = "A custom node suite to augment the capabilities of the [AP Workflows for ComfyUI](https://perilli.com/ai/comfyui/)"
+description = "A custom node suite to augment the capabilities of the [a/AP Workflows for ComfyUI](https://perilli.com/ai/comfyui/)."
 version = "1.0.2"
 license = {file = "LICENSE"}
 
