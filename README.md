@@ -16,4 +16,8 @@ Notice: This code is based on Kijai's `Image Batch Filter`, available [here](htt
 
 ## Installation
 
-Clone this repo into the `/comfyui/custom_nodes` folder.
+Install from ComfyUI Manager:
+
+<img width="1378" alt="APW Nodes ComfyUI Manager" src="https://github.com/user-attachments/assets/0893fccf-3a5e-4726-a6e6-0e32c60d28b8" />
+
+or clone this repo into the `/comfyui/custom_nodes` folder.
