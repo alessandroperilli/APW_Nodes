@@ -1,74 +1,82 @@
 import torch
-from comfy.utils import common_upscale # needed for the replacement logic
-
 
 class ImageListFilter:
     """
-    Passes through or removes images from an IMAGE list according to a
-    minimum width / height.  “0” means “no limit” for that dimension.
+    Passes through or removes images from an IMAGE list according
+    to a minimum width / height. “0” means “no limit” for that dimension.
 
-    • width_min: images whose width  ≤ width_min  are dropped
-    • height_min: images whose height ≤ height_min are dropped
+    • width_min: images with width  ≤ width_min  are dropped
+    • height_min: images with height ≤ height_min are dropped
 
-    A replacement_image can be supplied; if present an image
-    that would be dropped is instead replaced with that image.
+    If *all* images are dropped and a ``fallback_image`` is supplied, the node
+    outputs a single‑element IMAGE list containing that fallback image.
+    The fallback tensor is normalised (uint8 → float32 0‑1) and guaranteed to
+    have an explicit batch‑dimension so that downstream nodes and PIL previews
+    can handle it without raising a *Cannot handle this data type* error.
     """
 
-    INPUT_IS_LIST  = True
-    RETURN_TYPES   = ("IMAGE", "STRING")
+    INPUT_IS_LIST = True
+    RETURN_TYPES = ("IMAGE", "STRING")
     OUTPUT_IS_LIST = (True, False)
-    RETURN_NAMES   = ("images", "removed_indices")
-    FUNCTION       = "filter"
-    CATEGORY       = "APW Nodes"
+    RETURN_NAMES = ("images", "removed_indices")
+    FUNCTION = "filter"
+    CATEGORY = "APW Nodes"
 
     @classmethod
     def INPUT_TYPES(cls):
         return {
             "required": {
                 "images": ("IMAGE",),
-                "width_min":  ("INT", {"default": 0, "min": 0}),
+                "width_min": ("INT", {"default": 0, "min": 0}),
                 "height_min": ("INT", {"default": 0, "min": 0}),
             },
             "optional": {
-                "replacement_image": ("IMAGE",),
+                "fallback_image": ("IMAGE",),
             },
         }
+
+    def _ensure_tensor_4d_float(self, img):
+        """Make sure *img* is float32 with shape (1, H, W, C)."""
+        if isinstance(img, list):  # Unwrap widget lists
+            img = img[0]
+        if img.ndim == 3:          # (H, W, C) → add batch dim
+            img = img.unsqueeze(0)
+        if img.dtype == torch.uint8:  # uint8 0‑255 → float32 0‑1
+            img = img.to(torch.float32).div(255.0)
+        return img
 
     def filter(self,
                images,
                width_min,
                height_min,
-               replacement_image=None):
+               fallback_image=None):
 
-        # unwrap widget lists (ComfyUI wraps scalar widgets in 1-element lists)
-        if isinstance(width_min,  list):  width_min  = width_min[0]
-        if isinstance(height_min, list):  height_min = height_min[0]
-        if isinstance(replacement_image, list) and replacement_image:
-            replacement_image = replacement_image[0]
+        # unwrap scalar widget lists (Comfy wraps INT widgets in 1‑elem lists)
+        if isinstance(width_min, list):
+            width_min = width_min[0]
+        if isinstance(height_min, list):
+            height_min = height_min[0]
 
-        # add 1 to user input
-        width_thr  = width_min  + 1 if width_min  else 0
+        # Convert optional fallback right away so it’s ready if needed
+        if fallback_image is not None:
+            fallback_image = self._ensure_tensor_4d_float(fallback_image)
+
+        # user entry N means “keep ≥ N+1” (to match original semantics)
+        width_thr = width_min + 1 if width_min else 0
         height_thr = height_min + 1 if height_min else 0
 
         kept, removed = [], []
 
         for idx, img in enumerate(images):
-            _, H, W, _ = img.shape   # B=1, H, W, C
+            _, H, W, _ = img.shape  # B, H, W, C
 
-            too_narrow = (width_thr  and W < width_thr)
-            too_short  = (height_thr and H < height_thr)
-
-            if too_narrow or too_short:
+            if (width_thr and W < width_thr) or (height_thr and H < height_thr):
                 removed.append(idx)
-                if replacement_image is not None:
-                    rep = replacement_image
-                    # resize rep to match current image if needed
-                    if rep.shape[1:3] != img.shape[1:3]:
-                        rep = common_upscale(rep.movedim(-1, 1), W, H,
-                                             "lanczos", "center").movedim(1, -1)
-                    kept.append(rep[0] if rep.ndim == 4 else rep)
-                # otherwise drop image
             else:
                 kept.append(img)
 
-        return kept, ', '.join(map(str, removed))
+        # If nothing survived, fall back to a single image when provided
+        if not kept and fallback_image is not None:
+            kept.append(fallback_image)
+
+        return kept, ", ".join(map(str, removed))
