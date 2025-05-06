@@ -8,7 +8,7 @@ A custom node suite to augment the capabilities of the [AP Workflows for ComfyUI
 
 This node takes an `image list` as input, filters out images smaller than either width or height, and outputs a new `image list` without the excluded images.
 
-Example:
+If no input image remains after the filtering, the node outputs a new `image list` with the optional fallback image input.
 
 <img width="412" alt="Image List Filter v1" src="/Images/Image%20List%20Filter%201.0.3.png" />
 
