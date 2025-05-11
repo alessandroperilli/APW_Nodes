@@ -8,7 +8,7 @@ A custom node suite to augment the capabilities of the [AP Workflows for ComfyUI
 
 This node offers a list of preset resolutions for all local image generation models supported by APW for ComfyUI: Black Forest Labs FLUX.1, Stability AI Stable Diffusion 3.5, XL, and 1.5.
 
-The resolutions are organized by number of megapixels, as multiple models can generate 2 megapixel images.
+The resolutions are organized by number of megapixels rather than by model as FLUX and SD3.5 are capable of generating both 1MP and 2MP images.
 
 The user can also set a custom resolution.
 
