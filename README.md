@@ -12,13 +12,14 @@ The resolutions are organized by number of megapixels, as multiple models can ge
 
 The user can also set a custom resolution.
 
-`<img width="412" alt="Image Size (Local Models) v1" src="/Images/Local_Image_Size_v1.png" />`
+<img width="412" alt="Image Size (Local Models) v1" src="/Images/Local_Image_Size_v1.png" />
+
 
 ### Image Size (Cloud Models) v1
 
 This node offers a list of preset resolutions for all hosted image generation models supported by APW for ComfyUI: OpenAI GPT-Image-1.
 
-`<img width="412" alt="`Image Size (Cloud Models) v1 `" src="/Images/Cloud_Image_Size_v1.png" />`
+<img width="412" alt="`Image Size (Cloud Models) v1 `" src="/Images/Cloud_Image_Size_v1.png" />
 
 ### Video Size (Local Models) v1
 
@@ -26,7 +27,7 @@ This node offers a list of preset resolutions for all local video generation mod
 
 The user can also set a custom resolution.
 
-`<img width="412" alt="`Video Size (Local Models) v1 `" src="/Images/Local_Video_Size_v1.png" />`
+<img width="412" alt="`Video Size (Local Models) v1 `" src="/Images/Local_Video_Size_v1.png" />
 
 ### Image List Filter v1
 
@@ -34,7 +35,7 @@ This node takes an `image list` as input, filters out images smaller than either
 
 If no input image remains after the filtering, the node outputs a new `image list` with the optional fallback image input.
 
-`<img width="412" alt="Image List Filter v1" src="/Images/Image_List_Filter_v1.png" />`
+<img width="412" alt="Image List Filter v1" src="/Images/Image_List_Filter_v1.png" />
 
 Notice: This code is based on Kijai's `Image Batch Filter`, available [here](https://github.com/kijai/ComfyUI-KJNodes/). All credit to him.
 
