@@ -14,12 +14,17 @@ The user can also set a custom resolution.
 
 <img width="412" alt="Image Size (Local Models) v1" src="/Images/Local_Image_Size_v1.png" />
 
+<img width="412" alt="Image Size (Local Models) Menu v1" src="/Images/Local_Image_Size_Menu_v1.png" />
+
 
 ### Image Size (Cloud Models) v1
 
 This node offers a list of preset resolutions for all hosted image generation models supported by APW for ComfyUI: OpenAI GPT-Image-1.
 
 <img width="412" alt="`Image Size (Cloud Models) v1 `" src="/Images/Cloud_Image_Size_v1.png" />
+
+<img width="412" alt="`Image Size (Cloud Models) Menu v1 `" src="/Images/Cloud_Image_Size_Menu_v1.png" />
+
 
 ### Video Size (Local Models) v1
 
@@ -28,6 +33,9 @@ This node offers a list of preset resolutions for all local video generation mod
 The user can also set a custom resolution.
 
 <img width="412" alt="`Video Size (Local Models) v1 `" src="/Images/Local_Video_Size_v1.png" />
+
+<img width="412" alt="`Video Size (Local Models) Menu v1 `" src="/Images/Local_Video_Size_Menu_v1.png" />
+
 
 ### Image List Filter v1
 
