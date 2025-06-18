@@ -1,8 +1,20 @@
 # APW Nodes for ComfyUI
 
-A custom node suite to augment the capabilities of the [AP Workflows for ComfyUI](https://perilli.com/ai/comfyui/)
+A custom node suite to augment the capabilities of the [AP Workflows for ComfyUI](https://perilli.com/ai/comfyui/).
 
 ## Nodes
+
+### Image Saver v1
+
+This nodes allows you to save the input image/s in various formats.
+
+If you choose the .png format, the node allows you to embed the ComfyUI workflow and/or some extra metadata.
+
+You can customize the filename with the following variables: *%seed%*, *%date%*, and *%time%*.
+
+<img width="412" alt="Image Saver v1" src="/Images/Image_Saver_v1.png" />
+
+Credit: This code is based on receyuki's `SD Prompt Saver`, available [here](https://github.com/receyuki/comfyui-prompt-reader-node), and willmiao's `Save Image (LoraManager)`, available [here](https://github.com/willmiao/ComfyUI-Lora-Manager). All credit to them.
 
 ### Image Size (Local Models) v1
 
@@ -16,15 +28,13 @@ The user can also set a custom resolution.
 
 <img width="412" alt="Image Size (Local Models) Menu v1" src="/Images/Local_Image_Size_Menu_v1.png" />
 
-
 ### Image Size (Cloud Models) v1
 
 This node offers a list of preset resolutions for all hosted image generation models supported by APW for ComfyUI: OpenAI GPT-Image-1.
 
-<img width="412" alt="`Image Size (Cloud Models) v1 `" src="/Images/Cloud_Image_Size_v1.png" />
+<img width="412" alt="Image Size (Cloud Models) v1" src="/Images/Cloud_Image_Size_v1.png" />
 
-<img width="412" alt="`Image Size (Cloud Models) Menu v1 `" src="/Images/Cloud_Image_Size_Menu_v1.png" />
-
+<img width="412" alt="Image Size (Cloud Models) Menu v1" src="/Images/Cloud_Image_Size_Menu_v1.png" />
 
 ### Video Size (Local Models) v1
 
@@ -32,10 +42,9 @@ This node offers a list of preset resolutions for all local video generation mod
 
 The user can also set a custom resolution.
 
-<img width="412" alt="`Video Size (Local Models) v1 `" src="/Images/Local_Video_Size_v1.png" />
+<img width="412" alt="Video Size (Local Models) v1" src="/Images/Local_Video_Size_v1.png" />
 
-<img width="412" alt="`Video Size (Local Models) Menu v1 `" src="/Images/Local_Video_Size_Menu_v1.png" />
-
+<img width="412" alt="Video Size (Local Models) Menu v1" src="/Images/Local_Video_Size_Menu_v1.png" />
 
 ### Image List Filter v1
 
@@ -45,7 +54,7 @@ If no input image remains after the filtering, the node outputs a new `image lis
 
 <img width="412" alt="Image List Filter v1" src="/Images/Image_List_Filter_v1.png" />
 
-Notice: This code is based on Kijai's `Image Batch Filter`, available [here](https://github.com/kijai/ComfyUI-KJNodes/). All credit to him.
+Credit: This code is based on Kijai's `Image Batch Filter`, available [here](https://github.com/kijai/ComfyUI-KJNodes/). All credit to him.
 
 ## Installation
 
