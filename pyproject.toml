@@ -1,14 +1,14 @@
 [project]
 name = "apw_nodes"
 description = "A custom node suite to augment the capabilities of the [a/AP Workflows for ComfyUI](https://perilli.com/ai/comfyui/)."
-version = "1.2.4"
+version = "1.2.5"
 license = {file = "LICENSE"}
 
 [project.urls]
-Repository = "https://github.com/alessandroperilli/apw_nodes"
+Repository = "https://github.com/alessandroperilli/APW_Nodes"
 #  Used by Comfy Registry https://comfyregistry.org
 
 [tool.comfy]
 PublisherId = "perilli"
-DisplayName = "apw_nodes"
+DisplayName = "APW Nodes"
 Icon = "https://apworkflows.perilli.com/APW_logo.png"
