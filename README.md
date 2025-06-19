@@ -6,11 +6,17 @@ A custom node suite to augment the capabilities of the [AP Workflows for ComfyUI
 
 ### Image Saver v1
 
-This nodes allows you to save the input image/s in various formats.
+This node allows you to save the input image/s in various formats: `.png`, `.jpg`/`.jpeg`, and `.webp`.
 
-If you choose the .png format, the node allows you to embed the ComfyUI workflow and/or some extra metadata.
+For each supported format, the node allows you to save a string of your preference in the EXIF tag `UserComment` (tag ID: `0x9286`).
 
-You can customize the filename with the following variables: *%seed%*, *%date%*, and *%time%*.
+The `UserComment` tag can then be displayed by any image manipulation software supporting EXIF. Here's an example with [XnView MP](https://www.xnview.com/en/):
+
+<img width="412" alt="EXIF UserComment in XnView MP" src="/Images/XnViewMP.png" />
+
+If you choose the `.png` format, the node also allows you to embed the ComfyUI workflow in the `extra` section of the image metadata.
+
+You can customize the filename with the following variables: `%seed%`, `%date%`, and `%time%`.
 
 <img width="412" alt="Image Saver v1" src="/Images/Image_Saver_v1.png" />
 

@@ -8,9 +8,9 @@ import os, sys
 import numpy as np
 from pathlib import Path
 from datetime import datetime
-from typing import List, Any
 import folder_paths
 from PIL import Image, PngImagePlugin
+import piexif
 
 class APW_ImageSaver:
 
@@ -48,7 +48,7 @@ class APW_ImageSaver:
                 ),
                 "date_format": ("STRING", {"default": "%Y-%m-%d", "multiline": False}),
                 "time_format": ("STRING", {"default": "%H%M%S", "multiline": False}),
-                "generation_notes": ("STRING", {"default": "", "multiline": True}),
+                "EXIF_UserComment": ("STRING", {"default": "", "multiline": True}),
                 "embed_workflow": ("BOOLEAN", {
                     "default": True,
                     "tooltip": "Embeds the complete workflow data into the image metadata. Only works with PNG and WebP formats."
@@ -70,10 +70,6 @@ class APW_ImageSaver:
     def _strftime(fmt: str) -> str:
         return datetime.now().strftime(fmt)
 
-    @staticmethod
-    def _ensure_list(obj: Any) -> List:
-        return obj if isinstance(obj, (list, tuple)) else [obj]
-
     # ------------------- main routine ----------------------
     def save_images(
         self,
@@ -87,7 +83,7 @@ class APW_ImageSaver:
         date_format: str = "%Y-%m-%d",
         time_format: str = "%H%M%S",
         embed_workflow: bool = True,
-        generation_notes: str = "",
+        EXIF_UserComment: str = "",
         extra_pnginfo=None,
     ):
         (
@@ -115,9 +111,9 @@ class APW_ImageSaver:
 
         saved_filenames, saved_paths, ui_images = [], [], []
 
-        for idx, img in enumerate(images):
+        for (batch_number, image) in enumerate(images):
             var_map = base_vars.copy()
-            var_map["%counter"] = f"{counter_base + idx:05}"
+            var_map["%counter"] = f"{counter_base + batch_number:05}"
 
             rel_folder = self._replace_tokens(path, var_map)
             rel_filename = self._replace_tokens(filename, var_map)
@@ -127,16 +123,17 @@ class APW_ImageSaver:
 
             full_path = final_folder / f"{rel_filename}.{image_format}"
 
-            pil_img = self._to_pil(img)
+            i = 255. * image.cpu().numpy()
+            img = Image.fromarray(np.clip(i, 0, 255).astype(np.uint8))
 
             self.process_image(
-                pil_img,
+                img,
                 full_path,
                 image_format,
                 lossless_webp,
                 jpg_webp_quality,
                 embed_workflow,
-                generation_notes,
+                EXIF_UserComment,
                 seed,
                 extra_pnginfo=extra_pnginfo,
             )
@@ -170,37 +167,6 @@ class APW_ImageSaver:
         return template.strip("/")
 
     @staticmethod
-    def _to_pil(img):
-        # Already PIL?
-        if isinstance(img, Image.Image):
-            return img
-
-        try:
-            if isinstance(img, torch.Tensor):
-
-                i = 255. * img.cpu().numpy()
-                
-                # Handle batch dimension - squeeze any singleton dimensions
-                while i.ndim > 3:
-                    i = i.squeeze(0)
-                    
-                return Image.fromarray(np.clip(i, 0, 255).astype(np.uint8))
-            elif isinstance(img, np.ndarray):
-                # Handle numpy arrays
-                arr = (img * 255.0) if img.max() <= 1.0 else img
-                
-                # Handle batch dimension - squeeze any singleton dimensions
-                while arr.ndim > 3:
-                    arr = arr.squeeze(0)
-                    
-                return Image.fromarray(np.clip(arr, 0, 255).astype(np.uint8))
-            else:
-                raise TypeError(f"Unsupported image data type: {type(img)}")
-                
-        except Exception as e:
-            raise RuntimeError(f"APW_ImageSaver: failed to convert {type(img)} - {str(e)}") from e
-
-    @staticmethod
     def process_image(
         img: Image.Image,
         path: Path,
@@ -208,26 +174,53 @@ class APW_ImageSaver:
         lossless_webp: bool,
         quality: int,
         embed_workflow: bool,
-        generation_notes: str,
+        EXIF_UserComment: str,
         seed: int,
         extra_pnginfo=None,
     ):
 
-        if image_format == "png":
-            pnginfo = PngImagePlugin.PngInfo()
-            if embed_workflow and extra_pnginfo is not None:
-                workflow_json = json.dumps(extra_pnginfo["workflow"])
-                pnginfo.add_text("workflow", workflow_json)
-            if generation_notes:
-                pnginfo.add_text("generation_notes", generation_notes)
-            pnginfo.add_text("seed", str(seed))
-            img.save(path, pnginfo=pnginfo)
-        elif image_format in {"jpg", "jpeg"}:
-            img.convert("RGB").save(path, quality=quality)
-        elif image_format == "webp":
-            img.save(path, "WEBP", lossless=lossless_webp, quality=quality)
-        else:
-            raise ValueError(f"Unsupported image_format: {image_format}")
+        try:
+
+            exif_dict = {}
+
+            if image_format == "png":
+                pnginfo = PngImagePlugin.PngInfo()
+
+                if embed_workflow and extra_pnginfo is not None:
+                    workflow_json = json.dumps(extra_pnginfo["workflow"])
+                    pnginfo.add_text("workflow", workflow_json)
+
+                if EXIF_UserComment:
+                        exif_dict['Exif'] = {piexif.ExifIFD.UserComment: b'UNICODE\0' + EXIF_UserComment.encode('utf-16be')}
+                        exif_bytes = piexif.dump(exif_dict)
+                
+                img.save(path, pnginfo=pnginfo, exif=exif_bytes)
+
+            elif image_format == "webp":
+                try:
+                    
+                    if EXIF_UserComment:
+                        exif_dict['Exif'] = {piexif.ExifIFD.UserComment: b'UNICODE\0' + EXIF_UserComment.encode('utf-16be')}
+                        exif_bytes = piexif.dump(exif_dict)
+                        
+                except Exception as e:
+                    print(f"Error adding EXIF data: {e}")
+
+                img.save(path, "WEBP", lossless=lossless_webp, quality=quality, exif=exif_bytes)
+
+            elif image_format in {"jpg", "jpeg"}:
+                if EXIF_UserComment:
+                    try:
+                        exif_dict['Exif'] = {piexif.ExifIFD.UserComment: b'UNICODE\0' + EXIF_UserComment.encode('utf-16be')}
+                        exif_bytes = piexif.dump(exif_dict)
+
+                    except Exception as e:
+                        print(f"Error adding EXIF data: {e}")
+
+                img.convert("RGB").save(path, quality=quality, exif=exif_bytes)
+        
+        except Exception as e:
+                print(f"Error saving image: {e}")
 
 #----
 
