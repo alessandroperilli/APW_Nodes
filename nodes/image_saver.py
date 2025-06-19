@@ -1,8 +1,6 @@
 from ..helpers import any, _get_kw
 import torch
 
-#----
-
 import json
 import os, sys
 import numpy as np
@@ -221,8 +219,6 @@ class APW_ImageSaver:
         
         except Exception as e:
                 print(f"Error saving image: {e}")
-
-#----
 
 
 NODE_CLASS_MAPPINGS = {
