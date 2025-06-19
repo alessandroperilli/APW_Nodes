@@ -10,6 +10,7 @@ import folder_paths
 from PIL import Image, PngImagePlugin
 import piexif
 
+
 class APW_ImageSaver:
 
     def __init__(self):
