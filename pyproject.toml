@@ -5,7 +5,7 @@ version = "1.2.0"
 license = {file = "LICENSE"}
 
 [project.urls]
-Repository = "https://github.com/alessandroperilli/apw_nodes"
+Repository = "https://github.com/alessandroperilli/APW_Nodes"
 #  Used by Comfy Registry https://comfyregistry.org
 
 [tool.comfy]
