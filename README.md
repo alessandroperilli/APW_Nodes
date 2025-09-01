@@ -1,3 +1,9 @@
+# This repo is archived!
+
+Please refer to its replacement: [Open Creative Studio Nodes for ComfyUI](https://github.com/alessandroperilli/OCS_Nodes#open-creative-studio-nodes-for-comfyui)
+
+---
+
 # APW Nodes for ComfyUI
 
 A custom node suite to augment the capabilities of the [AP Workflows for ComfyUI](https://perilli.com/ai/comfyui/).
